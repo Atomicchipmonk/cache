@@ -280,6 +280,67 @@ Support for local sensor hardware:
 - **Current predictions**: NOAA currents stations
 - **Polling**: Daily fetch of 7-day forecasts for areas of interest
 
+### IREQ-5: Astronomical Calculations (New)
+Calculate celestial events for any location and time:
+
+**Required Calculations:**
+- **Sunrise time** (UTC and local time)
+- **Sunset time** (UTC and local time)
+- **Solar noon** (sun's highest point)
+- **Civil/Nautical/Astronomical twilight** (begin and end times)
+- **Moonrise time**
+- **Moonset time**
+- **Moon phase** (new, waxing crescent, first quarter, waxing gibbous, full, waning gibbous, last quarter, waning crescent)
+- **Moon illumination percentage**
+- **Moon altitude and azimuth** (for navigation)
+
+**Use Cases:**
+- Route planning (daylight hours available for navigation)
+- Night watch planning (moonlight conditions)
+- Photography planning (golden hour, blue hour)
+- Tide correlation (some tides follow lunar cycles)
+- Navigation (celestial navigation reference)
+
+**Recommended Libraries:**
+
+*Rust (Backend):*
+- **`astro`** crate - Comprehensive astronomical calculations
+- **`sun`** crate - Solar position and rise/set times
+- **`moon-phase`** crate - Lunar phase calculations
+- Or **`suncalc`** crate - Port of popular suncalc.js (all-in-one)
+
+*Dart/Flutter (Frontend):*
+- **`suncalc`** package - Dart port of suncalc.js
+- **`flutter_sunrise_sunset`** - Widget-ready calculations
+- Can also call Rust backend via API for consistency
+
+**Why On-Demand Calculation?**
+- ✅ No storage overhead (astronomical data would be huge)
+- ✅ Always accurate (no stale data issues)
+- ✅ Works offline (pure math, no API required)
+- ✅ Instant results (calculations are very fast)
+- ✅ No sync complexity (nothing to synchronize)
+- ✅ Infinite timespan (calculate for any date, past or future)
+
+**Implementation:**
+- **Calculate on-demand** using astronomical algorithms (no storage needed)
+- Computations are fast (<1ms per calculation)
+- No database storage required - computed from latitude, longitude, and timestamp
+- **Caching**: Optional in-memory cache for repeated queries (e.g., UI rendering)
+- Libraries handle all complex orbital mechanics
+
+**Performance:**
+- Single calculation: <1ms
+- Batch calculation (30 days): <30ms
+- Negligible memory footprint
+- No database bloat
+
+**Display:**
+- Show sunrise/sunset times in plan view
+- Display twilight hours for night sailing
+- Moon phase indicator on map interface
+- Alert when approaching sunset (configurable warning time)
+
 ---
 
 ## Device Requirements
@@ -472,6 +533,15 @@ Support for local sensor hardware:
 - Background sync when connection available
 - Queue outgoing changes during offline periods
 - Graceful degradation when tile data unavailable
+
+### AREQ-5: Time Zone Handling (New)
+- **Storage**: All timestamps stored in UTC (ISO 8601 format)
+- **Display**: Convert to local timezone for presentation
+- **Default local timezone**: America/Los_Angeles (Pacific Time)
+- **User configurable**: Allow users to set preferred display timezone
+- **Plan times**: Accept local time input, convert to UTC for storage
+- **Sensor readings**: Forecast times in UTC, display in user's local time
+- **Example**: Plan starts "2026-09-28 08:00:00 PST" → stored as "2026-09-28T16:00:00Z"
 
 ### AREQ-2: Multi-Device Sync
 - **Device registration**: Each device gets unique ID

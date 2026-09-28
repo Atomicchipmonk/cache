@@ -1,0 +1,21 @@
+# Rust build artifacts
+backend/target/
+backend/cache.db
+backend/cache.db-shm
+backend/cache.db-wal
+backend/load_route.sql
+
+# Nix
+result
+result-*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
